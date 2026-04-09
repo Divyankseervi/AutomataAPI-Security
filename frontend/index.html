@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DFA Zero-Trust Web API Demo</title>
+    <meta name="description" content="Automata-Guided Secure API Access Verification">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- Modern Tech Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        
+        <!-- Header -->
+        <header class="app-header">
+            <div class="logo">
+                <span class="logo-shield">⛊</span>
+                <h1>Automata<span>API</span> Security</h1>
+            </div>
+            <div class="subtitle">Zero-Trust Formal Verification Model</div>
+        </header>
+
+        <main class="dashboard-grid">
+            
+            <!-- Left Column: Controls & Actions -->
+            <section class="panel control-panel">
+                <div class="panel-header">
+                    <h2>API Sequence Setup</h2>
+                </div>
+                
+                <div class="status-indicator">
+                    <span class="status-dot healthy"></span>
+                    <span class="status-text healthy-text" id="global-status">SYSTEM SECURE - AWAITING TRAFFIC</span>
+                </div>
+
+                <div class="action-buttons">
+                    <h3>Simulate Client Traffic</h3>
+                    <button class="api-btn submit-btn" data-endpoint="/login">
+                        <span class="method post">POST</span> 
+                        <span class="path">/login</span>
+                    </button>
+                    <button class="api-btn get-btn" data-endpoint="/view_dashboard">
+                        <span class="method get">GET</span> 
+                        <span class="path">/view_dashboard</span>
+                    </button>
+                    <button class="api-btn submit-btn" data-endpoint="/edit_profile">
+                        <span class="method put">PUT</span> 
+                        <span class="path">/edit_profile</span>
+                    </button>
+                    <button class="api-btn submit-btn" data-endpoint="/logout">
+                        <span class="method post">POST</span> 
+                        <span class="path">/logout</span>
+                    </button>
+                </div>
+
+                <div class="threat-actions">
+                    <h3>Threat Simulations</h3>
+                    <button class="api-btn generic-btn" data-endpoint="/edit_profile">
+                        <span class="threat-icon">⚠️</span> Bypass Login -> Edit Profile
+                    </button>
+                    <button class="api-btn logout-all" id="reset-btn">
+                        <span class="threat-icon">🔄</span> Reset Session DFA
+                    </button>
+                </div>
+            </section>
+
+            <!-- Middle Column: DFA Visualization -->
+            <section class="panel vis-panel">
+                <div class="panel-header">
+                    <h2>Live State Machine (DFA)</h2>
+                </div>
+                
+                <div class="dfa-graph" id="dfa-graph">
+                    <!-- Nodes -->
+                    <div class="node active" id="node-q_0" style="top: 10%; left: 50%;">
+                        <div class="pulse"></div>
+                        <div class="node-label">q_0<br><small>Unauthenticated</small></div>
+                    </div>
+                    <div class="node" id="node-q_1" style="top: 35%; left: 20%;">
+                        <div class="pulse"></div>
+                        <div class="node-label">q_1<br><small>Authenticated</small></div>
+                    </div>
+                    <div class="node" id="node-q_2" style="top: 60%; left: 50%;">
+                        <div class="pulse"></div>
+                        <div class="node-label">q_2<br><small>Context Loaded</small></div>
+                    </div>
+                    <div class="node" id="node-q_3" style="top: 35%; left: 80%;">
+                        <div class="pulse"></div>
+                        <div class="node-label">q_3<br><small>Safely Closed</small></div>
+                    </div>
+                    <div class="node error-node hidden" id="node-q_error" style="top: 85%; left: 50%;">
+                        <div class="pulse"></div>
+                        <div class="node-label">q_err<br><small>Violation (Trap)</small></div>
+                    </div>
+
+                    <!-- Edges (drawn via SVG overlay) -->
+                    <svg class="edges-overlay" width="100%" height="100%">
+                        <!-- Defs for arrowheads -->
+                        <defs>
+                            <marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5"
+                                markerWidth="6" markerHeight="6" orient="auto">
+                              <path d="M 0 0 L 10 5 L 0 10 z" fill="rgba(255,255,255,0.4)" />
+                            </marker>
+                            <marker id="arrow-active" viewBox="0 0 10 10" refX="10" refY="5"
+                                markerWidth="6" markerHeight="6" orient="auto">
+                              <path d="M 0 0 L 10 5 L 0 10 z" fill="#00d4ff" />
+                            </marker>
+                        </defs>
+                        <!-- Paths will be drawn here dynamically by JS -->
+                    </svg>
+                </div>
+            </section>
+
+            <!-- Right Column: Logs -->
+            <section class="panel log-panel">
+                <div class="panel-header">
+                    <h2>Traffic Logs & Enforcement (O(1))</h2>
+                </div>
+                <div class="terminal" id="terminal-output">
+                    <div class="log-entry sys-log">
+                        > Automata enforcement engine initialized.<br>
+                        > Synthesizing session context... OK.<br>
+                        > Ready for real-time traffic monitoring.
+                    </div>
+                    <!-- Dynamic logs here -->
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

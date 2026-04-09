@@ -4,23 +4,26 @@ from flask_cors import CORS
 from dfa import get_session, reset_session
 
 app = Flask(__name__)
-# Enable CORS for the frontend to communicate with the API
 CORS(app)
 
-# Common helper for simulating API responses
 def process_request(endpoint, simulate_latency=True):
     start_time = time.time()
     
-    # Simulate networking/processing time for a real-world feel
+    # 1. JWT Simulation (Pre-DFA Check)
+    jwt_token = request.headers.get("Authorization", "")
+    if endpoint != '/login':
+        if not jwt_token or not jwt_token.startswith("Bearer "):
+            return jsonify({"status": "blocked", "state": "q_error", "message": "Missing JWT Token."}), 401
+            
+    # Simulate hardware latency slightly
     if simulate_latency:
-        time.sleep(0.01) # Baseline small delay
+        time.sleep(0.005)
 
-    # 1. Get DFA Session
-    session_id = request.headers.get("X-Session-ID", "demo_user")
+    # 2. Extract DFA Session
+    session_id = request.headers.get("X-Session-ID", "strict_demo")
     dfa = get_session(session_id)
     
-    # 2. Process through Automaton O(1)
-    # The DFA transitions strictly dictate access. No database query needed!
+    # 3. Process Call in O(1)
     is_allowed, current_state, message = dfa.process_call(endpoint)
     
     end_time = time.time()
@@ -34,38 +37,30 @@ def process_request(endpoint, simulate_latency=True):
         "latency_ms": latency_ms
     }
     
+    if is_allowed and endpoint == '/login':
+        response_data['token'] = f"Bearer secure_token_{int(time.time())}"
+        
     status_code = 200 if is_allowed else 403
     return jsonify(response_data), status_code
 
-# Mock Endpoints for the Case Study
+# Strict API Endpoints matching Case Study
 @app.route('/login', methods=['POST'])
-def login():
-    return process_request('/login')
+def login(): return process_request('/login')
 
 @app.route('/view_dashboard', methods=['GET'])
-def view_dashboard():
-    return process_request('/view_dashboard')
+def view_dashboard(): return process_request('/view_dashboard')
 
-@app.route('/edit_profile', methods=['POST', 'PUT'])
-def edit_profile():
-    return process_request('/edit_profile')
+@app.route('/edit_profile', methods=['PUT', 'POST'])
+def edit_profile(): return process_request('/edit_profile')
 
 @app.route('/logout', methods=['POST'])
-def logout():
-    return process_request('/logout')
+def logout(): return process_request('/logout')
 
-# Utility endpoints for the interactive demo
 @app.route('/reset', methods=['POST'])
 def reset():
-    session_id = request.headers.get("X-Session-ID", "demo_user")
+    session_id = request.headers.get("X-Session-ID", "strict_demo")
     new_state = reset_session(session_id)
     return jsonify({"status": "success", "state": new_state, "message": "Session reset."}), 200
-
-@app.route('/current_state', methods=['GET'])
-def current_state():
-    session_id = request.headers.get("X-Session-ID", "demo_user")
-    dfa = get_session(session_id)
-    return jsonify({"status": "success", "state": dfa.state}), 200
 
 if __name__ == '__main__':
     app.run(debug=True, port=8080)

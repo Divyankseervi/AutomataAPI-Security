@@ -2,8 +2,10 @@ import os
 import time
 from flask import Flask, jsonify, request
 from flask_cors import CORS
-from dfa import get_session, reset_session
-
+try:
+    from dfa import get_session, reset_session
+except ModuleNotFoundError:
+    from backend.dfa import get_session, reset_session
 app = Flask(__name__, static_folder='../frontend', static_url_path='/')
 
 @app.route('/')

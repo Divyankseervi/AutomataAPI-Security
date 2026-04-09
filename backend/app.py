@@ -1,10 +1,14 @@
+import os
 import time
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from dfa import get_session, reset_session
 
-app = Flask(__name__)
-CORS(app)
+app = Flask(__name__, static_folder='../frontend', static_url_path='/')
+
+@app.route('/')
+def index():
+    return app.send_static_file('index.html')
 
 def process_request(endpoint, simulate_latency=True):
     start_time = time.time()

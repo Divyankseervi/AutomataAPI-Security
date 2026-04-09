@@ -1,4 +1,4 @@
-const API_BASE = 'http://127.0.0.1:8080';
+const API_BASE = '';
 const terminal = document.getElementById('terminal-output');
 const globalStatusText = document.getElementById('global-status');
 const statusDot = document.querySelector('.status-dot');

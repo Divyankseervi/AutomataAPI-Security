@@ -1,11 +1,7 @@
 # Automata-Guided Secure API Access Verification
 
 **Application Domain**: Cloud Security, API Management, and Zero-Trust Security Frameworks  
-**Team Members**:
-- KESHAV JHUNJHUNWALA (24BCE2033)
-- Divyank Seervi (24BCE0793)
-- Aryan Raj (24BCT0329)
-
+- Divyank Seervi
 ---
 
 ## Abstract
